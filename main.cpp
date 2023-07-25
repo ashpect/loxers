@@ -5,6 +5,7 @@
 #include <vector>
 #include "token_type.h"
 #include "common.h"
+#include "scanner.hpp"
 
 
 using namespace std;
@@ -47,7 +48,7 @@ void runFile(std::string filePath) {
     if (hadError){
         std::exit(65);
     }
-    //run(content);
+    run(content);
     return;
 
 }

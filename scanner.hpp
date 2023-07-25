@@ -72,12 +72,91 @@ class Scanner {
             case '\n':
                 line++;
                 break;
-            
+            case '"': string(); break;   
             default:
-                error(line,"Unexpected character.");
-                break;
+                if (isDigit())
+                {
+                    number();
+                }
+                else if(isAlpha(c)) {
+                    identifier();
+                }
+                else{
+                    error(line,"Unexpected character.");
+                    break;
+                }
+                
             }
+        };
+
+        void identifier() {
+            while (isAlphaNumeric(peek())) advance();
+
+            std::string text = source.substr(start, current-start);
+
+            TokenType type = keywords[text];
+            if (type == NULL) type = TOKEN_IDENTIFIER;
+            addToken(type);
+
         }
+
+        bool isAlpha(char c) {
+            return ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_');
+        }
+
+        bool isAlphaNumeric(char c) {
+            return (isAlpha(c) || isDigit());
+        }
+
+        bool isDigit(){
+            return (source[current] >= '0' && source[current] <= '9');
+            //compares ascii code bw 48 and 57
+        }
+
+        void number(){
+
+            //while(end not reached and {next character is a digit or a decimal point with a digit followed})
+            while((!isAtEnd()) && ((peek() >= '0' && peek() <= '9') || (peek() == '.' && isDigitNext()))){
+                advance();
+            }
+
+            //gave double as a literal type
+            double value = std::stod(source.substr(start, current-start));
+            addToken(TOKEN_NUMBER, &value);
+        }
+
+        bool isDigitNext() {
+            if (current+1 >= source.length()) return false;
+            return (source[current+1] >= '0' && source[current+1] <= '9');
+        }
+
+        void string() {
+
+            while (peek() != '"' && !isAtEnd())
+            {
+                //If someone writes a string without closing it and closes it in the next line.
+                //supports multi-line strings.
+                if (peek() == '\n') line++;
+                advance();
+            }
+            
+            //in case you run out of source code before finding the closing quote
+            if (isAtEnd())
+            {
+                error(line, "Unterminated string.");
+                return;
+            }
+
+            //Take in the closing ", basically you can also just do current++ or even just trim with current-start-1 and then current++.
+            advance();
+            
+            //Trim the surrounding quotes
+            std::string value = source.substr(start+1, current-start-2);
+
+            addToken(TOKEN_STRING,&value);
+
+        }
+        
 
         //advance consumes the next character in the source code and returns it
         char advance() {
@@ -109,11 +188,4 @@ class Scanner {
             std::string text = source.substr(start, current-start);
             tokens.push_back(Token(type, text, literal, line));
         }
-
-
-
 };
-
-int main() {
-    return 0;
-}
