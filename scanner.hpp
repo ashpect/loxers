@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
-#include "token_type.h"
-#include "error.h"
+#include "token_type.hpp"
+#include "error.hpp"
 
 class Scanner {
     public:
@@ -95,9 +95,10 @@ class Scanner {
             std::string text = source.substr(start, current-start);
 
             TokenType type = keywords[text];
-            if (type == NULL) type = TOKEN_IDENTIFIER;
-            addToken(type);
+            TokenType* ptr = &type;
 
+            if (ptr == nullptr) type = TOKEN_IDENTIFIER;
+            addToken(type);
         }
 
         bool isAlpha(char c) {

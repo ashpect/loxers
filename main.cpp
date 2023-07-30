@@ -3,8 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include "token_type.h"
-#include "common.h"
+#include "token_type.hpp"
+#include "common.hpp"
 #include "scanner.hpp"
 
 
@@ -20,7 +20,9 @@ int main(int argc, char* argv[]) {
         std::cout<<"Usage for REPL mode : cpplox" <<std::endl;
 		std::exit(64);
     } else if (argc == 2) {
-        runFile(argv[1]);
+        std::cout<<"TESTING"<<std::endl;
+        std::cout<<argv[1]<<std::endl;
+        //runFile(argv[1]);
     } else {
         runPrompt();
     }
@@ -37,6 +39,9 @@ void runFile(std::string filePath) {
         exit(1);
     }
 
+    std::cout<<filePath<<std::endl;
+    std::cout<<file.binary<<std::endl;
+
     //creates oss object to store the file content
     std::ostringstream oss;
     //reads the file and stores it in oss object
@@ -48,7 +53,9 @@ void runFile(std::string filePath) {
     if (hadError){
         std::exit(65);
     }
-    run(content);
+
+
+    //run(content);
     return;
 
 }
@@ -71,14 +78,15 @@ void runPrompt() {
 
 void run(std::string source) {
 
-    //Onject of Scanner class
-    //Scanner scanner = new Scanner(source);
-    //std::vector<Token> tokens = scanner.scanTokens();
+    //Object of Scanner class
+    Scanner scanner(source);
+    std::vector<Token> tokens = scanner.scanTokens();
 
     std::cout<<"Testing";
-    // for (Token token : tokens) {
-    //     std::cout << token << std::endl;
-    // }
+    for (const Token& token : tokens) {
+        std::cout << token.lexeme << std::endl;
+    }
+    
     return;
 }
 

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include "common.h"
+#include "common.hpp"
 
 bool hadError = false;
 
